@@ -15,7 +15,7 @@ def ask_openrouter(prompt: str) -> str:
 
 
     data = {
-        "model": "mistralai/mistral-7b-instruct",  # or another free/added model
+        "model": "openai/gpt-3.5-turbo",  # or another free/added model
         "messages": [
             {
                 "role": "system",
