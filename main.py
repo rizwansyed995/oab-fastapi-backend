@@ -22,8 +22,7 @@ def analyze_logs(logs: List[LogEntry]):
         prompt += f"- Timestamp: {log.timestamp}, Duration: {log.duration}, Urgency: {log.urgency}, Flow: {log.flow}\n"
     prompt += (
     "\nBased on this data, assess my OAB severity and give simple, very brief suggestions "
-    "in 3-4 lines max, using breathing exercises, pelvic exercises, or routine changes. "
-    "Avoid any medical jargon or complex sentences. Do NOT suggest seeing a doctor."
+    "in 3-4 lines max "
 )
 
     result = ask_openrouter(prompt)
