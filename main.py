@@ -49,4 +49,4 @@ Analyze the severity of the user's OAB and suggest lifestyle-based techniques li
         advice = response.json()["choices"][0]["message"]["content"]
         return {"advice": advice}
     except Exception as e:
-        return {"error": str(e)}
+        return {"error heheh": str(e)}
