@@ -20,7 +20,7 @@ def analyze_logs(logs: List[LogEntry]):
     prompt = "Here are my recent washroom logs:\n"
     for log in logs:
         prompt += f"- Timestamp: {log.timestamp}, Duration: {log.duration}, Urgency: {log.urgency}, Flow: {log.flow}\n"
-    prompt += "\nBased on this data, assess my OAB severity and give suggestions using breathing techniques, pelvic exercises, or routine adjustments. Avoid suggesting to consult a doctor."
+    prompt += "\nBased on this data, assess my OAB severity and give suggestions using breathing techniques, pelvic exercises, or routine adjustments. Avoid suggesting to consult a doctor. Please respond in only 3-4 lines"
 
     result = ask_openrouter(prompt)
     return {
