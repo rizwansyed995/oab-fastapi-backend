@@ -1,52 +1,29 @@
-import os
-import requests
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
-from dotenv import load_dotenv
-
-load_dotenv()
-
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+from openrouter_handler import ask_openrouter
 
 app = FastAPI()
 
-class WashroomLog(BaseModel):
+class LogEntry(BaseModel):
     timestamp: str
     duration: str
     urgency: str
     flow: str
 
-class LogsRequest(BaseModel):
-    logs: List[WashroomLog]
+@app.get("/")
+def home():
+    return {"message": "OAB Tracker backend is running"}
 
 @app.post("/analyze")
-async def analyze_logs(data: LogsRequest):
-    logs = data.logs
+def analyze_logs(logs: List[LogEntry]):
+    prompt = "Here are my recent washroom logs:\n"
+    for log in logs:
+        prompt += f"- Timestamp: {log.timestamp}, Duration: {log.duration}, Urgency: {log.urgency}, Flow: {log.flow}\n"
+    prompt += "\nBased on this data, assess my OAB severity and give suggestions using breathing techniques, pelvic exercises, or routine adjustments. Avoid suggesting to consult a doctor."
 
-    prompt = f"""You are a health assistant for Overactive Bladder (OAB). Based on the following washroom log data:
-    
-{[log.dict() for log in logs]}
-
-Analyze the severity of the user's OAB and suggest lifestyle-based techniques like breathing exercises, timed voiding, and pelvic floor routines. Avoid suggesting a doctor unless absolutely necessary. Output only the advice clearly.
-"""
-
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json"
+    result = ask_openrouter(prompt)
+    return {
+        "diagnosis": result,
+        "log_count": len(logs)
     }
-
-    payload = {
-        "model": "openai/gpt-3.5-turbo",  # You can change to another OpenRouter model if you want
-        "messages": [
-            {"role": "user", "content": prompt}
-        ]
-    }
-
-    try:
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
-        response.raise_for_status()
-        advice = response.json()["choices"][0]["message"]["content"]
-        return {"advice": advice}
-    except Exception as e:
-        return {"error": str(e)}
